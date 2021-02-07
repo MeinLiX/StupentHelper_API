@@ -1,0 +1,15 @@
+### Intellij ###
+*.iml
+.idea/
+.idea_modules/
+/out/
+
+### Node ###
+logs
+pids
+*.log
+*.pid
+*.seed
+
+build/Release
+node_modules

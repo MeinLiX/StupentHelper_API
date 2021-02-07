@@ -1,0 +1,24 @@
+{
+  "name": "student_helper_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "bcrypt": "*",
+    "body-parser": "*",
+    "cors": "*",
+    "express": "*",
+    "express-session": "*",
+    "mysql2": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "sequelize": "*",
+    "uuid": "*"
+  }
+}
