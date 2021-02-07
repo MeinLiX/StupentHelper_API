@@ -151,7 +151,7 @@ export async function register(req, res) {
                             }
                         });
                     } else {
-                       // res.header('Access-Control-Allow-Credentials','true');
+                        // res.header('Access-Control-Allow-Credentials','true');
                         res.status(200).json({
                             success: true,
                             message: "User is created."
@@ -180,4 +180,12 @@ export async function register(req, res) {
             message: err
         });
     }
+}
+
+export async function logout(req, res) {
+    req.logout();
+    res.status(200).json({
+        success: true,
+        message: "User logged out."
+    });
 }

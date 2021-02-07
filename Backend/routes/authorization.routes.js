@@ -1,10 +1,11 @@
 import {Router} from "express";
-import {login, register} from "../Controllers/AuthorizationController.js";
+import {login, register, logout} from "../Controllers/AuthorizationController.js";
+import {checkAuthenticated,checkNoAuthenticated} from "../config/passport.js";
 
 const router = Router();
 
-router.post("/login", login);
-router.post("/register", register);
-//router.post("/logout", logout);
+router.post("/login", checkNoAuthenticated, login);
+router.post("/register", checkNoAuthenticated, register);
+router.post("/logout", checkAuthenticated, logout);
 
 export default router;

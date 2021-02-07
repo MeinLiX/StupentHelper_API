@@ -15,6 +15,17 @@ export function checkAuthenticated(req, res, next) {
                 message: 'Access denied, please log in!'
             }
     });
+}
+export function checkNoAuthenticated(req, res, next) {
+    if (!req.isAuthenticated()) {
+        return next()
+    }
+    res.status(403).send({
+        error:
+            {
+                message: 'You already log in!'
+            }
+    });
 
 }
 
