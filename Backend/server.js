@@ -14,6 +14,8 @@ const {json, urlencoded} = bodyparser;
 
 ;(async () => {
     const app = express();
+    logger(app);
+
     initializePassport(passport);
     app.use(json());
     app.use(urlencoded({extended: true}));
@@ -25,12 +27,10 @@ const {json, urlencoded} = bodyparser;
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(cors({
-        origin: "http://109.197.222.248:3000/",
-        credentials: true,
+        origin: "http://localhost:3000",
+        credentials: true
     }));
 
-    logger(app);
-    
     app.use('/api', routes);
 
     try {

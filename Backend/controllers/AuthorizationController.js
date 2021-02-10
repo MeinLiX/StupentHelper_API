@@ -13,7 +13,7 @@ function Verify({email, password}) {
             success: false,
             status: 200,
             error: {
-                message: `Field email can not be empty!`
+                message: `The email field can not be empty`
             }
         };
     } else if (!password) {
@@ -21,7 +21,7 @@ function Verify({email, password}) {
             success: false,
             status: 200,
             error: {
-                message: `Field password can not be empty!`
+                message: `The password field can not be empty`
             }
 
         };
@@ -94,7 +94,7 @@ export async function login(req, res) {
                     res.status(200).json({
                         success: false,
                         error: {
-                            message: `Password isn't correct.`
+                            message: `Incorrect email or password`
                         }
                     });
                 }
@@ -103,7 +103,7 @@ export async function login(req, res) {
             res.status(200).json({
                 success: false,
                 error: {
-                    message: `User not found.`
+                    message: `Incorrect email or password`
                 }
             });
         }
@@ -133,7 +133,7 @@ export async function register(req, res) {
         if (!FoundUser) {
             let CreateUser = await User.create({
                 idUser: uuid(),
-                username: req.body.username | "user", //TODO: trim username and validation.
+                username: req.body.username,
                 email: email,
                 password: await bcrypt.hash(password, saltRounds)
             });
@@ -170,7 +170,7 @@ export async function register(req, res) {
             res.status(200).json({
                 success: false,
                 error: {
-                    message: "Email is taken."
+                    message: "This email is already taken"
                 }
             });
         }

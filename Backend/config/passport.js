@@ -4,7 +4,6 @@ import {models} from '../config/dbConnect.js';
 
 const User = models.user;
 
-
 export function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next()
