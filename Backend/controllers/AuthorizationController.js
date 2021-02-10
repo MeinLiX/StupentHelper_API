@@ -7,13 +7,25 @@ const saltRounds = 6;
 
 const emailPattern = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
-function Verify({email, password}) {
+const passwordProp = {
+    minLength: 8,
+    maxLength: 70
+}
+const usernameProp = {
+    minLength: 2,
+    maxLength: 45
+}
+const emailProp = {
+    maxLength: 45
+}
+
+function Verify({email, password, username}) {
     if (!email) {
         return {
             success: false,
             status: 200,
             error: {
-                message: `The email field can not be empty`
+                message: `The email field can not be empty.`
             }
         };
     } else if (!password) {
@@ -21,12 +33,58 @@ function Verify({email, password}) {
             success: false,
             status: 200,
             error: {
-                message: `The password field can not be empty`
+                message: `The password field can not be empty.`
             }
 
         };
     }
-    if (!emailPattern.test(email.trim())) {
+    if (password.length < passwordProp.minLength) {
+        return {
+            success: false,
+            status: 200,
+            error: {
+                message: `Password should contain at least ${passwordProp.minLength} characters.`
+            }
+        };
+    } else if (password.length > passwordProp.maxLength) {
+        return {
+            success: false,
+            status: 200,
+            error: {
+                message: `Password must not exceed ${passwordProp.maxLength} characters.`
+            }
+        };
+    }
+
+    if (username) {
+        if (username.length < usernameProp.minLength) {
+            return {
+                success: false,
+                status: 200,
+                error: {
+                    message: `Username should contain at least ${usernameProp.minLength} characters.`
+                }
+            };
+        } else if (username.length > usernameProp.maxLength) {
+            return {
+                success: false,
+                status: 200,
+                error: {
+                    message: `Username must not exceed ${usernameProp.maxLength} characters.`
+                }
+            };
+        }
+    }
+
+    if (email.length > emailProp.maxLength) {
+        return {
+            success: false,
+            status: 200,
+            error: {
+                message: `Email must not exceed ${emailProp.maxLength} characters.`
+            }
+        };
+    } else if (!emailPattern.test(email.trim())) {
         return {
             success: false,
             status: 200,
@@ -39,7 +97,7 @@ function Verify({email, password}) {
         success: true,
         status: 200,
         error: {
-            message: `validation confirm`
+            message: `validation confirm.`
         }
     }
 }
@@ -94,7 +152,7 @@ export async function login(req, res) {
                     res.status(200).json({
                         success: false,
                         error: {
-                            message: `Incorrect email or password`
+                            message: `Incorrect email or password.`
                         }
                     });
                 }
@@ -103,14 +161,14 @@ export async function login(req, res) {
             res.status(200).json({
                 success: false,
                 error: {
-                    message: `Incorrect email or password`
+                    message: `Incorrect email or password.`
                 }
             });
         }
     } catch (err) {
         res.status(500).json({
             success: false,
-            message: err
+            message: err.message
         });
     }
 }
@@ -162,7 +220,7 @@ export async function register(req, res) {
                 res.status(200).json({
                     success: false,
                     error: {
-                        message: "idk"
+                        message: "Trouble with DB.."
                     }
                 });
             }
@@ -170,14 +228,14 @@ export async function register(req, res) {
             res.status(200).json({
                 success: false,
                 error: {
-                    message: "This email is already taken"
+                    message: "This email is already taken."
                 }
             });
         }
     } catch (err) {
         res.status(500).json({
             success: false,
-            message: err
+            message: err.message
         });
     }
 }

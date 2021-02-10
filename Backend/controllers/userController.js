@@ -1,8 +1,17 @@
 import {models} from '../config/dbConnect.js';
+
 const User = models.user;
 
 export async function findAll(req, res) {
-    res.send(await User.findAll());
+    try {
+        res.send(await User.findAll());
+    } catch (err) {
+        res.status(500).send({
+            error: {
+                message: err.message
+            }
+        });
+    }
 }
 
 export async function findOne(req, res) {
@@ -15,9 +24,12 @@ export async function findOne(req, res) {
         } else {
             res.status(500).send({message: "User not found."})
         }
-
     } catch (err) {
-        res.status(500).send(err);
+        res.status(500).send({
+            error: {
+                message: err.message
+            }
+        });
     }
 }
 

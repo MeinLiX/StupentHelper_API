@@ -12,8 +12,13 @@ config.session = {
 };
 
 config.app = {
-    port: 4000,
+    port: 4000
 };
+
+config.cors={
+    origin: "http://meinlix.tk:3000",
+    credentials: true
+}
 
 config.db  = {
     HOST: "localhost",
@@ -21,7 +26,7 @@ config.db  = {
     PASSWORD: "password",
     DB: "mydb",
     dialect: "mysql",
-    logging: false,
+    logging: false
 };
 
 export default config;

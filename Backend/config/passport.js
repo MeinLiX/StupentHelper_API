@@ -33,7 +33,7 @@ function initialize(passport) {
         const user = await User.findOne({where: {email: email}});
         if (user == null) {
             return done(null, false, {
-                message: 'No user with that email'
+                message: 'No user with that email.'
             });
         }
         try {
@@ -41,7 +41,7 @@ function initialize(passport) {
                 return done(null, user);
             } else {
                 return done(null, false, {
-                    message: 'Password incorrect'
+                    message: 'Password incorrect.'
                 });
             }
         } catch (err) {
