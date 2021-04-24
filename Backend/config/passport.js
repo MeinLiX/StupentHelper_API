@@ -8,7 +8,7 @@ export function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next()
     }
-    res.status(403).send({
+    res.status(403).json({
         error:
             {
                 message: 'Access denied, please log in!'
