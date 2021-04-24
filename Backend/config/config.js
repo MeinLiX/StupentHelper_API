@@ -7,7 +7,7 @@ config.session = {
     cookie: {
         path: '/',
         httpOnly: true,
-        maxAge: 15 * 60 * 1000
+        maxAge: 60 * 60 * 1000000
     }
 };
 
