@@ -5,7 +5,8 @@ export default (sequelize, DataTypes) => sequelize.define('subject', {
         primaryKey: true
     },
     content: {
-        type: DataTypes.STRING(100000)
+        type: DataTypes.STRING(100000),
+        allowNull: true,
     },
     subjectId: {
         type: DataTypes.STRING(45),
