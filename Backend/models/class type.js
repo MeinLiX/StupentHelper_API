@@ -18,7 +18,7 @@ export default (sequelize, DataTypes) => sequelize.define('class type', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "idClass type"},
+        { name: "idClass type" },
       ]
     },
   ]

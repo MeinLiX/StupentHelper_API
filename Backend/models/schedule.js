@@ -66,7 +66,7 @@ export default (sequelize, DataTypes) => sequelize.define('schedule', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "idSchedule"},
+        { name: "idSchedule" },
       ]
     },
     {
@@ -74,49 +74,49 @@ export default (sequelize, DataTypes) => sequelize.define('schedule', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "idSchedule"},
+        { name: "idSchedule" },
       ]
     },
     {
       name: "classId_idx",
       using: "BTREE",
       fields: [
-        {name: "classId"},
+        { name: "classId" },
       ]
     },
     {
       name: "subjectId_idx",
       using: "BTREE",
       fields: [
-        {name: "subjectId"},
+        { name: "subjectId" },
       ]
     },
     {
       name: "weekdayId_idx",
       using: "BTREE",
       fields: [
-        {name: "weekdayId"},
+        { name: "weekdayId" },
       ]
     },
     {
       name: "classtypeId_idx",
       using: "BTREE",
       fields: [
-        {name: "classtypeId"},
+        { name: "classtypeId" },
       ]
     },
     {
       name: "teacherId_idx",
       using: "BTREE",
       fields: [
-        {name: "teacherId"},
+        { name: "teacherId" },
       ]
     },
     {
       name: "userId_idx",
       using: "BTREE",
       fields: [
-        {name: "userId"},
+        { name: "userId" },
       ]
     },
   ]

@@ -18,7 +18,7 @@ export default (sequelize, DataTypes) => sequelize.define('subject', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "idSubject"},
+        { name: "idSubject" },
       ]
     },
     {
@@ -26,7 +26,7 @@ export default (sequelize, DataTypes) => sequelize.define('subject', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "idSubject"},
+        { name: "idSubject" },
       ]
     },
   ]

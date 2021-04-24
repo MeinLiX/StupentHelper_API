@@ -34,14 +34,14 @@ export default (sequelize, DataTypes) => sequelize.define('deadline', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "idDeadline"},
+        { name: "idDeadline" },
       ]
     },
     {
       name: "subjectId_idx",
       using: "BTREE",
       fields: [
-        {name: "subjectId"},
+        { name: "subjectId" },
       ]
     },
   ]

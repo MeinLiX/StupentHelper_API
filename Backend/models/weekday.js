@@ -19,7 +19,7 @@ export default (sequelize, DataTypes) => sequelize.define('weekday', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "idWeekday"},
+        { name: "idWeekday" },
       ]
     },
     {
@@ -27,7 +27,7 @@ export default (sequelize, DataTypes) => sequelize.define('weekday', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "idWeekday"},
+        { name: "idWeekday" },
       ]
     },
     {
@@ -35,7 +35,7 @@ export default (sequelize, DataTypes) => sequelize.define('weekday', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "Weekday"},
+        { name: "Weekday" },
       ]
     },
   ]

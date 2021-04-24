@@ -27,7 +27,7 @@ export default (sequelize, DataTypes) => sequelize.define('user', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "idUser"},
+        { name: "idUser" },
       ]
     },
     {
@@ -35,7 +35,7 @@ export default (sequelize, DataTypes) => sequelize.define('user', {
       unique: true,
       using: "BTREE",
       fields: [
-        {name: "email"},
+        { name: "email" },
       ]
     },
   ]
