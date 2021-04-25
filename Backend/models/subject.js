@@ -7,6 +7,14 @@ export default (sequelize, DataTypes) => sequelize.define('subject', {
   name: {
     type: DataTypes.STRING(45),
     allowNull: false
+  },
+  userId: {
+    type: DataTypes.STRING(45),
+    allowNull: false,
+    references: {
+      model: 'user',
+      key: 'idUser'
+    }
   }
 }, {
   sequelize,
@@ -27,6 +35,13 @@ export default (sequelize, DataTypes) => sequelize.define('subject', {
       using: "BTREE",
       fields: [
         { name: "idSubject" },
+      ]
+    },
+    {
+      name: "userId_idx",
+      using: "BTREE",
+      fields: [
+        { name: "userId" },
       ]
     },
   ]

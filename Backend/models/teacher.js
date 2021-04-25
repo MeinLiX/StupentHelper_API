@@ -15,6 +15,14 @@ export default (sequelize, DataTypes) => sequelize.define('teacher', {
   'middle name': {
     type: DataTypes.STRING(45),
     allowNull: true
+  },
+  userId: {
+    type: DataTypes.STRING(45),
+    allowNull: false,
+    references: {
+      model: 'user',
+      key: 'idUser'
+    }
   }
 }, {
   sequelize,
@@ -35,6 +43,13 @@ export default (sequelize, DataTypes) => sequelize.define('teacher', {
       using: "BTREE",
       fields: [
         { name: "idTeacher" },
+      ]
+    },    
+    {
+      name: "userId_idx",
+      using: "BTREE",
+      fields: [
+        { name: "userId" },
       ]
     },
   ]
