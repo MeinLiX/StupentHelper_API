@@ -23,7 +23,7 @@ export async function FindUK(req, res) {
                 message: err.message
             }
         });
-    }
+    };
 }
 
 export async function Create(req, res) {
@@ -35,7 +35,7 @@ export async function Create(req, res) {
             }
         });
         return;
-    }
+    };
     try {
         let CreateSubject = await Subject.create({
             idSubject: uuid(),
@@ -53,17 +53,17 @@ export async function Create(req, res) {
                 success: false,
                 error: {
                     message: "This name already taken"
-                },
-                ...CreateSubject
+                }
             });
-        }
+        };
     } catch (err) {
         res.status(500).json({
-            success: false,error:{
-            message: err.message
-        }
+            success: false,
+            error: {
+                message: err.message
+            }
         });
-    }
+    };
 }
 
 export async function Update(req, res) {
@@ -71,5 +71,29 @@ export async function Update(req, res) {
 }
 
 export async function Delete(req, res) {
-
+    try {
+        let test=Subject.destroy({
+            where: {
+                idSubject: req.body.idSubject
+            }
+        });
+        if(await test>0){
+            res.status(200).json({
+                success: true,
+                message: "Subject deleted."
+            });
+        }else{
+            res.status(200).json({
+                success: false,
+                message: "Subject not found."
+            });
+        };   
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: {
+                message: err.message
+            }
+        });
+    };
 }
