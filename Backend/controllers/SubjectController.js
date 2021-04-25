@@ -72,22 +72,23 @@ export async function Update(req, res) {
 
 export async function Delete(req, res) {
     try {
-        let test=Subject.destroy({
+        let test = Subject.destroy({
             where: {
-                idSubject: req.body.idSubject
+                idSubject: req.params.idSubject,
+                userId: req.user.idUser
             }
         });
-        if(await test>0){
+        if (await test > 0) {
             res.status(200).json({
                 success: true,
                 message: "Subject deleted."
             });
-        }else{
+        } else {
             res.status(200).json({
                 success: false,
                 message: "Subject not found."
             });
-        };   
+        };
     } catch (err) {
         res.status(500).json({
             success: false,
