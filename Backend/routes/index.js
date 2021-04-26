@@ -6,6 +6,7 @@ import {Pong, CheckAuthenticated} from "../controllers/RootController.js"
 import authorizationRoutes from "./authorization.routes.js";
 import usersRoutes from "./users.routes.js";
 import subjectsRoutes from "./subjects.routes.js";
+import teachersRoutes from "./teachers.routes.js";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use(checkAuthenticated);
 
 router.use('/users', usersRoutes);
 router.use('/subjects', subjectsRoutes);
+router.use('/teachers', teachersRoutes);
 
 export default router;
