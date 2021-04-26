@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import {v4 as uuid} from "uuid";
 import {models} from '../config/dbConnect.js';
+import {TException} from '../utils/templatesRes.js'
 
 const User = models.user;
 const saltRounds = 6;
@@ -166,10 +167,7 @@ export async function login(req, res) {
             });
         }
     } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: err.message
-        });
+        TException(req,res,err);
     }
 }
 
@@ -233,10 +231,7 @@ export async function register(req, res) {
             });
         }
     } catch (err) {
-        res.status(500).json({
-            success: false,
-            message: err.message
-        });
+        TException(req,res,err);
     }
 }
 
