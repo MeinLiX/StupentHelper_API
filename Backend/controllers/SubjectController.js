@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
-import {TException, TNotFoundModel} from '../utils/templatesRes.js'
+import { TException, TNotFoundModel } from '../utils/templatesRes.js'
 
 const Subject = models.subject;
 
@@ -9,7 +9,10 @@ export async function FindUK(req, res) {
         const Subjects = await Subject.findAll({
             where: {
                 userId: req.user.idUser
-            }
+            },
+            order: [
+                ['name', 'ASC']
+            ]
         });
         if (Subjects) {
             res.status(200).json({
