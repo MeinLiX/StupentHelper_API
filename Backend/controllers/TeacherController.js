@@ -1,4 +1,4 @@
-import {v4 as uuid} from "uuid";
+import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
 import { TException, TNotFoundModel } from '../utils/templatesRes.js'
 
@@ -28,8 +28,8 @@ export async function FindUK(req, res) {
 }
 
 export async function Create(req, res) {
-    let {surname,name,middle_name} = req.body;
-    
+    let { surname, name, middle_name } = req.body;
+
     if (!surname || surname?.trim() == "") {
         res.status(200).json({
             success: false,
@@ -68,7 +68,47 @@ export async function Create(req, res) {
 }
 
 export async function Update(req, res) {
+    let { surname, name, middle_name } = req.body; 
+    let newData; //TODO: lodash
+    if (surname)
+        newData = { ...newData, surname }
+    if (name)
+        newData = { ...newData, name }
+    if (middle_name)
+        newData = { ...newData, middle_name }
 
+    try {
+        const FoundTeacher = await Teacher.findOne({
+            where: {
+                idTeacher: req.params.idTeacher,
+                userId: req.user.idUser
+            }
+        });
+        const UpdateTeacher = await Teacher.update(
+            newData,
+            {
+                where: {
+                    idTeacher: req.params.idTeacher,
+                    userId: req.user.idUser
+                }
+            }
+        );
+        if (UpdateTeacher > 0) {
+            res.status(200).json({
+                success: true,
+                message: "Teacher updated."
+            });
+        } else if (FoundTeacher) {
+            res.status(200).json({
+                success: true,
+                message: "Teacher not changed."
+            });
+        } else {
+            TNotFoundModel(req, res, "Teacher");
+        };
+    } catch (err) {
+        TException(req, res, err);
+    };
 }
 
 export async function Delete(req, res) {
