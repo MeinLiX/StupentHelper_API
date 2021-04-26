@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/", FindUK);
 router.post("/", Create);
-router.patch("/:idSubject", Update);
-router.delete("/:idSubject", Delete);
+router.patch("/:idTeacher", Update);
+router.delete("/:idTeacher", Delete);
 
 export default router;
