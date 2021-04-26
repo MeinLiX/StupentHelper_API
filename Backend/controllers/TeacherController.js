@@ -35,5 +35,22 @@ export async function Update(req,res){
 }
 
 export async function Delete(req,res){
-
+    try {
+        const DeletedTeacher = Teacher.destroy({
+            where: {
+                idTeacher: req.params.idTeacher,
+                userId: req.user.idUser
+            }
+        });
+        if (await DeletedTeacher > 0) {
+            res.status(200).json({
+                success: true,
+                message: "Teacher deleted."
+            });
+        } else {
+            TNotFoundModel(req, res, "Teacher");
+        };
+    } catch (err) {
+        TException(req, res, err);
+    };
 }
