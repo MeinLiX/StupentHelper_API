@@ -29,7 +29,7 @@ export async function FindUK(req, res) {
 
 export async function Create(req, res) {
     let { name } = req.body;
-    name = name.trim();
+    name = name?.trim();
     if (TNotNullAndEmpty(req, res, name, "name")) {
         return;
     };
@@ -78,7 +78,7 @@ export async function Create(req, res) {
 
 export async function Update(req, res) {
     let { name } = req.body;
-    name = name.trim();
+    name = name?.trim();
     if (TNotNullAndEmpty(req, res, name, "name")) {
         return;
     };

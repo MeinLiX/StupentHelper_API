@@ -1,6 +1,8 @@
+import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
-import { TException, TNotFoundModel } from '../utils/templatesRes.js'
-const ClassType = models.classType;
+import { TException, TNotFoundModel, TNotNullAndEmpty } from '../utils/templatesRes.js'
+
+const ClassType = models.classtype;
 
 export async function FindUK(req, res) {
     try {
@@ -9,7 +11,7 @@ export async function FindUK(req, res) {
                 userId: req.user.idUser
             },
             order: [
-                ['type', 'ASC']
+                ['typeName', 'ASC']
             ]
         });
         if (ClassTypes) {
@@ -26,7 +28,52 @@ export async function FindUK(req, res) {
 }
 
 export async function Create(req, res) {
+    let { typeName } = req.body;
+    typeName = typeName?.trim();
+    if (TNotNullAndEmpty(req, res, typeName, "typeName")) {
+        return;
+    };
+    try {
+        const FoundClassTypeSameTypeName = await ClassType.findOne({
+            where: {
+                typeName: typeName,
+                userId: req.user.idUser
+            }
+        });
+        if (FoundClassTypeSameTypeName) {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message: "This type is already taken."
+                }
+            });
+            return;
+        }
 
+        const CreateClassType = await ClassType.create(
+            {
+                idClassType: uuid(),
+                typeName: typeName,
+                userId: req.user.idUser
+            });
+
+        if (CreateClassType) {
+            res.status(200).json({
+                success: true,
+                message: "ClassType is created.",
+                data: ClassType
+            });
+        } else {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message: "Trouble with DB.."
+                }
+            });
+        };
+    } catch (err) {
+        TException(req, res, err);
+    };
 }
 
 export async function Update(req, res) {
