@@ -1,10 +1,10 @@
-export default (sequelize, DataTypes) => sequelize.define('classType', {
-  'idClassType': {
+export default (sequelize, DataTypes) => sequelize.define('classtype', {
+  idClassType: {
     type: DataTypes.STRING(45),
     allowNull: false,
     primaryKey: true
   },
-  type: {
+  typeName: {
     type: DataTypes.STRING(45),
     allowNull: false
   },
@@ -18,7 +18,7 @@ export default (sequelize, DataTypes) => sequelize.define('classType', {
   }
 }, {
   sequelize,
-  tableName: 'classType',
+  tableName: 'classtype',
   timestamps: false,
   indexes: [
     {
