@@ -1,5 +1,5 @@
-import sequelize from 'sequelize';
 const {DataTypes} = sequelize;
+import sequelize from 'sequelize';
 import _Class  from "./class.js";
 import _deadline from "./deadline.js";
 import _notes from "./notes.js";
@@ -8,11 +8,11 @@ import _teacher from "./teacher.js";
 import _subject from "./subject.js";
 import _user from "./user.js";
 import _weekday from "./weekday.js";
-import _class_type from './class type.js';
+import _classType from './classType.js';
 
 function initModels(sequelize) {
   let Class = _Class(sequelize, DataTypes);
-  let class_type = _class_type(sequelize, DataTypes);
+  let classType = _classType(sequelize, DataTypes);
   let deadline = _deadline(sequelize, DataTypes);
   let notes = _notes(sequelize, DataTypes);
   let schedule = _schedule(sequelize, DataTypes);
@@ -27,8 +27,8 @@ function initModels(sequelize) {
   subject.hasMany(notes, { foreignKey: "subjectId"});
   schedule.belongsTo(Class, { foreignKey: "classId"});
   Class.hasMany(schedule, { foreignKey: "classId"});
-  schedule.belongsTo(class_type, { foreignKey: "classtypeId"});
-  class_type.hasMany(schedule, { foreignKey: "classtypeId"});
+  schedule.belongsTo(classType, { foreignKey: "classtypeId"});
+  classType.hasMany(schedule, { foreignKey: "classtypeId"});
   schedule.belongsTo(subject, { foreignKey: "subjectId"});
   subject.hasMany(schedule, { foreignKey: "subjectId"});
   schedule.belongsTo(teacher, { foreignKey: "teacherId"});
@@ -40,7 +40,7 @@ function initModels(sequelize) {
 
   return {
     Class,
-    class_type,
+    classType,
     deadline,
     notes,
     schedule,

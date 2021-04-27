@@ -1,5 +1,5 @@
-export default (sequelize, DataTypes) => sequelize.define('class type', {
-  'idClass type': {
+export default (sequelize, DataTypes) => sequelize.define('classType', {
+  'idClassType': {
     type: DataTypes.STRING(45),
     allowNull: false,
     primaryKey: true
@@ -18,7 +18,7 @@ export default (sequelize, DataTypes) => sequelize.define('class type', {
   }
 }, {
   sequelize,
-  tableName: 'class type',
+  tableName: 'classType',
   timestamps: false,
   indexes: [
     {
@@ -26,7 +26,7 @@ export default (sequelize, DataTypes) => sequelize.define('class type', {
       unique: true,
       using: "BTREE",
       fields: [
-        { name: "idClass type" },
+        { name: "idClassType" },
       ]
     },
     {
