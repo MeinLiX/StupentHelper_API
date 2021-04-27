@@ -7,6 +7,7 @@ import authorizationRoutes from "./authorization.routes.js";
 import usersRoutes from "./users.routes.js";
 import subjectsRoutes from "./subjects.routes.js";
 import teachersRoutes from "./teachers.routes.js";
+import classTypesRoutes from "./classTypes.routes.js";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use(checkAuthenticated);
 router.use('/users', usersRoutes);
 router.use('/subjects', subjectsRoutes);
 router.use('/teachers', teachersRoutes);
+router.use('/classtypes', classTypesRoutes);
 
 export default router;
