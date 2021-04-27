@@ -77,7 +77,49 @@ export async function Create(req, res) {
 }
 
 export async function Update(req, res) {
-
+    let { typeName } = req.body;
+    typeName = typeName?.trim();
+    if (TNotNullAndEmpty(req, res, typeName, "typeName")) {
+        return;
+    };
+    try {
+        const FoundClassTypeSameTypeName = await ClassType.findOne({
+            where: {
+                typeName: typeName,
+                userId: req.user.idUser
+            }
+        });
+        if (FoundClassTypeSameTypeName) {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message: "This typeName is already taken."
+                }
+            });
+            return;
+        }
+        const UpdateClassType = await ClassType.update(
+            {
+                typeName: typeName
+            },
+            {
+                where: {
+                    idClassType: req.params.idClassType,
+                    userId: req.user.idUser
+                }
+            }
+        );
+        if (UpdateClassType > 0) {
+            res.status(200).json({
+                success: true,
+                message: "ClassType updated."
+            });
+        } else {
+            TNotFoundModel(req, res, "ClassType");
+        };
+    } catch (err) {
+        TException(req, res, err);
+    };
 }
 
 export async function Delete(req, res) {
