@@ -1,8 +1,29 @@
 import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
-import { TException, TNotFoundModel } from '../utils/templatesRes.js'
+import { TException, TNotFoundModel, TNotNullAndEmpty } from '../utils/templatesRes.js'
 
 const Teacher = models.teacher;
+
+function GetData({ surname, name, middle_name }) {
+    let newData;
+    if (surname)
+        newData = {
+            ...newData,
+            surname: surname.trim() == "" ? null : surname.trim()
+        }
+    if (name)
+        newData = {
+            ...newData,
+            name: name.trim() == "" ? null : name.trim()
+        }
+    if (middle_name)
+        newData = {
+            ...newData,
+            'middle name': middle_name.trim() == "" ? null : middle_name.trim()
+        }
+
+    return newData;
+}
 
 export async function FindUK(req, res) {
     try {
@@ -28,24 +49,15 @@ export async function FindUK(req, res) {
 }
 
 export async function Create(req, res) {
-    let { surname, name, middle_name } = req.body;
-
-    if (!surname || surname?.trim() == "") {
-        res.status(200).json({
-            success: false,
-            error: {
-                message: "The surname field can not be empty."
-            }
-        });
+    let newData = GetData(req.body);
+    if (TNotNullAndEmpty(req, res, newData?.surname, "surname")) {
         return;
     };
     try {
         const CreateTeacher = await Teacher.create(
             {
                 idTeacher: uuid(),
-                surname: surname.trim(),
-                name: name?.trim(),
-                'middle name': middle_name?.trim(),
+                ...newData,
                 userId: req.user.idUser
             });
         if (CreateTeacher) {
@@ -68,15 +80,10 @@ export async function Create(req, res) {
 }
 
 export async function Update(req, res) {
-    let { surname, name, middle_name } = req.body; 
-    let newData; //TODO: lodash
-    if (surname)
-        newData = { ...newData, surname }
-    if (name)
-        newData = { ...newData, name }
-    if (middle_name)
-        newData = { ...newData, middle_name }
-
+    let newData = GetData(req.body);
+    if (TNotNullAndEmpty(req, res, newData?.surname, "surname")) {
+        return;
+    };
     try {
         const FoundTeacher = await Teacher.findOne({
             where: {

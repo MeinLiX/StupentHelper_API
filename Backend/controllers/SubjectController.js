@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
-import { TException, TNotFoundModel } from '../utils/templatesRes.js'
+import { TException, TNotFoundModel, TNotNullAndEmpty } from '../utils/templatesRes.js'
 
 const Subject = models.subject;
 
@@ -28,18 +28,19 @@ export async function FindUK(req, res) {
 }
 
 export async function Create(req, res) {
-    if (!req.body.name || req.body.name == "") {
-        res.status(200).json({
-            success: false,
-            error: {
-                message: "The name field can not be empty."
-            }
-        });
+    let { name } = req.body;
+    name = name.trim();
+    if (TNotNullAndEmpty(req, res, name, "name")) {
         return;
     };
     try {
-        const FoundSubject = await Subject.findOne({ where: { name: req.body.name } });
-        if (FoundSubject) {
+        const FoundSubjectSameName = await Subject.findOne({
+            where: {
+                name: name,
+                userId: req.user.idUser
+            }
+        });
+        if (FoundSubjectSameName) {
             res.status(200).json({
                 success: false,
                 error: {
@@ -52,7 +53,7 @@ export async function Create(req, res) {
         const CreateSubject = await Subject.create(
             {
                 idSubject: uuid(),
-                name: req.body.name,
+                name: name,
                 userId: req.user.idUser
             });
 
@@ -76,16 +77,30 @@ export async function Create(req, res) {
 }
 
 export async function Update(req, res) {
+    let { name } = req.body;
+    name = name.trim();
+    if (TNotNullAndEmpty(req, res, name, "name")) {
+        return;
+    };
     try {
-        const FoundSubject = await Subject.findOne({
+        const FoundSubjectSameName = await Subject.findOne({
             where: {
-                idSubject: req.params.idSubject,
+                name: name,
                 userId: req.user.idUser
             }
         });
+        if (FoundSubjectSameName) {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message: "This name is already taken."
+                }
+            });
+            return;
+        }
         const UpdateSubject = await Subject.update(
             {
-                name: req.body.name
+                name: name
             },
             {
                 where: {
@@ -98,11 +113,6 @@ export async function Update(req, res) {
             res.status(200).json({
                 success: true,
                 message: "Subject updated."
-            });
-        } else if (FoundSubject) {
-            res.status(200).json({
-                success: true,
-                message: "Subject not changed."
             });
         } else {
             TNotFoundModel(req, res, "Subject");
