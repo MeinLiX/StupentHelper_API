@@ -215,19 +215,29 @@ export async function Create(req, res) {
 
 export async function Delete(req, res) {
     try {
-        const DeletedSchedule = Schedule.destroy({
+        const DeletedSchedule = await Schedule.findOne({
             where: {
                 idSchedule: req.params.idSchedule,
                 userId: req.user.idUser
             }
         });
-        if (await DeletedSchedule > 0) {
+        if (!DeletedSchedule) {
+            TNotFoundModel(req, res, "Schedule");
+            return;
+        }
+        const isDeletedSchedule = await DeletedSchedule.destroy();
+        models.Class.destroy({
+            where: {
+                idClass: DeletedSchedule.classId
+            }
+        })
+        if (isDeletedSchedule) {
             res.status(200).json({
                 success: true,
                 message: "Schedule deleted."
             });
         } else {
-            TNotFoundModel(req, res, "Schedule");
+            throw new Error("Can't delete Schedule. Trouble with db..");
         };
     } catch (err) {
         TException(req, res, err);
