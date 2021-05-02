@@ -5,6 +5,6 @@ const router = Router();
 
 router.get("/", FindUK);
 router.post("/", Create);
-router.delete("/:idClassType", Delete);
+router.delete("/:idSchedule", Delete);
 
 export default router;
