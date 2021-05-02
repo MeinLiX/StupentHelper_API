@@ -10,12 +10,75 @@ export async function FindUK(req, res) {
         const Schedules = await Schedule.findAll({
             where: {
                 userId: req.user.idUser
-            }
+            },
         });
+        let data = [[], [], [], [], [], [], []]
         if (Schedules) {
-         
+            const MapPromises = Schedules.map(async el => {
 
+                const [CurrClass, CurrSubject, CurrWeekday, CurrClassType, CurrTeacher] = await Promise.all([
+                    models.Class.findOne({
+                        where:
+                        {
+                            idClass: el.classId
+                        }
+                    }),
+                    models.subject.findOne({
+                        where:
+                        {
+                            idSubject: el.subjectId,
+                            userId: el.userId
+                        }
+                    }),
+                    models.weekday.findOne({
+                        where:
+                        {
+                            idWeekday: el.weekdayId
+                        }
+                    }),
+                    models.classtype.findOne({
+                        where:
+                        {
+                            idClassType: el.classtypeId,
+                            userId: el.userId
+                        }
+                    }),
+                    models.teacher.findOne({
+                        where:
+                        {
+                            idTeacher: el.teacherId,
+                            userId: el.userId
+                        }
+                    }),
+                ]);
 
+                if (!CurrClass || !CurrSubject || !CurrWeekday || !CurrClassType || !CurrTeacher) {
+                    res.status(500).json({
+                        success: false,
+                        error: {
+                            message: "Some element's not found, schedule incorrect. Trouble with DB.."
+                        }
+                    });
+                    return;
+                }
+
+                data[parseInt(CurrWeekday.idWeekday) - 1].push({
+                    idSchedule: el.idSchedule,
+                    $class: CurrClass,
+                    subject: CurrSubject,
+                    weekday: CurrWeekday,
+                    classtype: CurrClassType,
+                    teacher: CurrTeacher,
+                    userId: el.userId
+                });
+            });
+
+            await Promise.all(MapPromises);
+
+            res.status(200).json({
+                success: true,
+                data: data
+            });
         } else {
             TNotFoundModel(req, res, "Schedule");
         }
@@ -43,10 +106,10 @@ export async function Create(req, res) {
                 to: new Date(0, 0, 0, $class?.to?.split(':')[0], $class?.to?.split(':')[1])
             });
         if (!CreateClass) {
-            res.status(200).json({
+            res.status(500).json({
                 success: false,
                 error: {
-                    message: "Trouble with DB.."
+                    message: "Class not created. Trouble with DB.."
                 }
             });
             return;
@@ -70,7 +133,7 @@ export async function Create(req, res) {
                 data: CreateSchedule
             });
         } else {
-            res.status(200).json({
+            res.status(500).json({
                 success: false,
                 error: {
                     message: "Trouble with DB.."
