@@ -5,6 +5,19 @@ import { TException, TNotFoundModel, TNotNullAndEmpty } from '../utils/templates
 const Schedule = models.schedule;
 const Class = models.Class;
 
+function ParseDateHHMM(strDate) {
+    const regex = /^([0-1][0-9]|2[0-3]):([0-5][0-9]|60)$/g;
+    const valid = regex.test(strDate);
+    if (valid) {
+        let time = strDate.split(":");
+        let res = new Date(`0001-01-01T${time[0]}:${time[1]}:00+0000`);
+        return res;
+    } else {
+        return null;
+    }
+}
+
+
 export async function FindUK(req, res) {
     try {
         const Schedules = await Schedule.findAll({
@@ -15,7 +28,6 @@ export async function FindUK(req, res) {
         let data = [[], [], [], [], [], [], []]
         if (Schedules) {
             const MapPromises = Schedules.map(async el => {
-
                 const [CurrClass, CurrSubject, CurrWeekday, CurrClassType, CurrTeacher] = await Promise.all([
                     models.Class.findOne({
                         where:
@@ -90,20 +102,75 @@ export async function FindUK(req, res) {
 
 export async function Create(req, res) {
     let { $class, subjectId, weekdayId, classtypeId, teacherId, parity } = req.body;
-    console.log(req.body);
     parity = parity ?? null;
     try {
-        //validation id's here:
+        //validation id's:
+        const [CurrSubject, CurrWeekday, CurrClassType, CurrTeacher] = await Promise.all([
+            models.subject.findOne({
+                where:
+                {
+                    idSubject: subjectId,
+                    userId: req.user.idUser
+                }
+            }),
+            models.weekday.findOne({
+                where:
+                {
+                    idWeekday: weekdayId
+                }
+            }),
+            models.classtype.findOne({
+                where:
+                {
+                    idClassType: classtypeId,
+                    userId: req.user.idUser
+                }
+            }),
+            models.teacher.findOne({
+                where:
+                {
+                    idTeacher: teacherId,
+                    userId: req.user.idUser
+                }
+            }),
+        ]);
 
+        if (!CurrSubject || !CurrWeekday || !CurrClassType || !CurrTeacher) {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message:
+                        `[` +
+                        `${CurrClass == null ? "Class" : ""}` +
+                        `${CurrSubject == null ? " Subject" : ""}` +
+                        `${CurrWeekday == null ? " Weekday" : ""}` +
+                        `${CurrClassType == null ? " ClassType" : ""}` +
+                        `${CurrTeacher == null ? " Teacher" : ""}` +
+                        `] not found, schedule can't be created.`
+                }
+            });
+            return;
+        }
 
-
+        //DATE validation:
+        const DateCkassFrom = ParseDateHHMM($class.from);
+        const DateClassTo = ParseDateHHMM($class.to);
+        if (!DateCkassFrom || !DateClassTo) {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message: "Class 'from'|'to' invalid."
+                }
+            });
+            return;
+        }
         //Try creation:
         const CreateClass = await Class.create(
             {
                 idClass: uuid(),
                 number: $class?.number,
-                from: new Date(0, 0, 0, $class?.from?.split(':')[0], $class?.from?.split(':')[1]),
-                to: new Date(0, 0, 0, $class?.to?.split(':')[0], $class?.to?.split(':')[1])
+                from: DateCkassFrom,
+                to: DateClassTo
             });
         if (!CreateClass) {
             res.status(500).json({
@@ -125,7 +192,7 @@ export async function Create(req, res) {
                 teacherId: teacherId,
                 userId: req.user.idUser
             });
-        console.log(CreateSchedule, CreateClass);
+
         if (CreateSchedule) {
             res.status(200).json({
                 success: true,
