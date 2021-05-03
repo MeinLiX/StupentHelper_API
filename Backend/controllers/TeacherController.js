@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
-import { TException, TNotFoundModel, TNotNullAndEmpty } from '../utils/templatesRes.js'
+import { TException, TNotFoundModel, TNotNullAndEmpty, TSearchModelbyForeignKey } from '../utils/templatesRes.js'
 
 const Teacher = models.teacher;
 
@@ -120,6 +120,13 @@ export async function Update(req, res) {
 
 export async function Delete(req, res) {
     try {
+        if (await TSearchModelbyForeignKey(models.schedule, req, res,
+            {
+                teacherId: req.params.idTeacher,
+            }
+        )) {
+            return;
+        }
         const DeletedTeacher = Teacher.destroy({
             where: {
                 idTeacher: req.params.idTeacher,

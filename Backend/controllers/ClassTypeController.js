@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
-import { TException, TNotFoundModel, TNotNullAndEmpty } from '../utils/templatesRes.js'
+import { TException, TNotFoundModel, TNotNullAndEmpty, TSearchModelbyForeignKey } from '../utils/templatesRes.js'
 
 const ClassType = models.classtype;
 
@@ -124,6 +124,13 @@ export async function Update(req, res) {
 
 export async function Delete(req, res) {
     try {
+        if (await TSearchModelbyForeignKey(models.schedule, req, res,
+            {
+                classtypeId: req.params.idClassType,
+            }
+        )) {
+            return;
+        }
         const DeletedClassType = ClassType.destroy({
             where: {
                 idClassType: req.params.idClassType,
