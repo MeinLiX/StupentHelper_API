@@ -26,3 +26,22 @@ export function TNotNullAndEmpty(req, res, value = "", name = "Model") {
     }
     return false;
 }
+
+export async function TSearchModelbyForeignKey(model, req, res, where) {
+    const FoundModel = await model.findOne({
+        where:
+        {
+            ...where
+        }
+    });
+    if (FoundModel) {
+        res.status(200).json({
+            success: false,
+            error: {
+                message: `Unable to delete, the object is used in another entity.`
+            }
+        });
+        return true;
+    }
+    return false;
+}
