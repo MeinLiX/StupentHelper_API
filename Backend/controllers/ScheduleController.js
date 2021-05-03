@@ -73,7 +73,6 @@ export async function FindUK(req, res) {
                     });
                     return;
                 }
-
                 data[parseInt(CurrWeekday.idWeekday) - 1].push({
                     idSchedule: el.idSchedule,
                     $class: CurrClass,
@@ -81,6 +80,7 @@ export async function FindUK(req, res) {
                     weekday: CurrWeekday,
                     classtype: CurrClassType,
                     teacher: CurrTeacher,
+                    parity: el.parity,
                     userId: el.userId
                 });
             });
