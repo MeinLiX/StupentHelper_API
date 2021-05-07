@@ -28,8 +28,47 @@ export async function FindUK(req, res) {
 }
 
 export async function Create(req, res) {
+    let { date, task, isDone, subjectId } = req.body;
+    task = task?.trim();
+    if (TNotNullAndEmpty(req, res, date, "date")) {
+        return;
+    };
     try {
+        const Subjects = await models.subject.findOne({
+            where: {
+                idSubject: subjectId,
+                userId: req.user.idUser
+            }
+        });
+        if (!Subjects) {
+            TNotFoundModel(req, res, "SubjectId");
+            return;
+        }
 
+        const CreateDeadline = await Deadline.create(
+            {
+                idDeadline: uuid(),
+                date: new Date(date), //TODO: ADD REGEX FOT DATE;
+                task: task,
+                isDone: isDone ?? false,
+                subjectId: subjectId,
+                userId: req.user.idUser
+            });
+
+        if (CreateDeadline) {
+            res.status(200).json({
+                success: true,
+                message: "Deadline is created.",
+                data: CreateDeadline
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                error: {
+                    message: "Trouble with DB.."
+                }
+            });
+        };
     } catch (err) {
         TException(req, res, err);
     };
