@@ -6,7 +6,7 @@ const Deadline = models.deadline;
 
 export async function FindUK(req, res) {
     try {
-        
+
     } catch (err) {
         TException(req, res, err);
     };
@@ -49,7 +49,20 @@ export async function Update(req, res) {
 
 export async function Delete(req, res) {
     try {
-        
+        const DeletedDeadline = await Deadline.destroy({
+            where: {
+                idDeadline: req.params.idDeadline,
+                userId: req.user.idUser
+            }
+        });
+        if (DeletedDeadline > 0) {
+            res.status(200).json({
+                success: true,
+                message: "Deadline deleted."
+            });
+        } else {
+            TNotFoundModel(req, res, "Deadline");
+        };
     } catch (err) {
         TException(req, res, err);
     };
