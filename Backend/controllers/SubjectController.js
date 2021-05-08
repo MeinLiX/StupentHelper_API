@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
-import { TException, TNotFoundModel, TNotNullAndEmpty, TSearchModelbyForeignKey} from '../utils/templatesRes.js'
+import { TException, TNotFoundModel, TNotNullAndEmpty, TSearchModelbyForeignKey } from '../utils/templatesRes.js'
 
 const Subject = models.subject;
 
@@ -58,18 +58,22 @@ export async function Create(req, res) {
             });
 
         if (CreateSubject) {
-            res.status(200).json({
-                success: true,
-                message: "Subject is created.",
-                data: CreateSubject
-            });
+            const CreateNote = await models.notes.create(
+                {
+                    idNote: uuid(),
+                    subjectId: CreateSubject.idSubject
+                });
+            if (CreateNote) {
+                res.status(200).json({
+                    success: true,
+                    message: "Subject is created.",
+                    data: CreateSubject
+                });
+            } else {
+                throw new Error("Trouble with DB..");
+            }
         } else {
-            res.status(200).json({
-                success: false,
-                error: {
-                    message: "Trouble with DB.."
-                }
-            });
+            throw new Error("Trouble with DB..");
         };
     } catch (err) {
         TException(req, res, err);
