@@ -135,19 +135,25 @@ export async function Delete(req, res) {
         )) {
             return;
         }
+        const CreateNote = await models.notes.destroy({
+            where: {
+                subjectId: req.params.idSubject
+            }
+        });
+
         const DeletedSubject = Subject.destroy({
             where: {
                 idSubject: req.params.idSubject,
                 userId: req.user.idUser
             }
         });
-        if (await DeletedSubject > 0) {
+        if (await DeletedSubject > 0 && CreateNote > 0) {
             res.status(200).json({
                 success: true,
                 message: "Subject deleted."
             });
         } else {
-            TNotFoundModel(req, res, "Subject");
+            TNotFoundModel(req, res, "Subject or(and) Note");
         };
     } catch (err) {
         TException(req, res, err);
