@@ -1,3 +1,4 @@
+import Sequelize from 'sequelize';
 import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
 import { TException, TNotFoundModel, TNotNullAndEmpty, TSearchModelbyForeignKey } from '../utils/templatesRes.js'
@@ -90,7 +91,12 @@ export async function Update(req, res) {
         const FoundSubjectSameName = await Subject.findOne({
             where: {
                 name: name,
-                userId: req.user.idUser
+                userId: req.user.idUser,
+                [Sequelize.Op.not]: [
+                    { 
+                        idSubject: req.params.idSubject 
+                    }
+                ]
             }
         });
         if (FoundSubjectSameName) {
@@ -102,24 +108,28 @@ export async function Update(req, res) {
             });
             return;
         }
-        const UpdateSubject = await Subject.update(
+        const FoundSubject = await Subject.findOne({
+            where: {
+                idSubject: req.params.idSubject,
+                userId: req.user.idUser
+            }
+        });
+        if (!FoundSubject) {
+            TNotFoundModel(req, res, "Subject");
+            return;
+        }
+        const UpdateSubject = await FoundSubject.update(
             {
                 name: name
-            },
-            {
-                where: {
-                    idSubject: req.params.idSubject,
-                    userId: req.user.idUser
-                }
             }
         );
-        if (UpdateSubject > 0) {
+        if (UpdateSubject) {
             res.status(200).json({
                 success: true,
                 message: "Subject updated."
             });
         } else {
-            TNotFoundModel(req, res, "Subject");
+            throw new Error("Trouble with DB..");
         };
     } catch (err) {
         TException(req, res, err);

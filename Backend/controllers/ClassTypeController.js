@@ -1,3 +1,4 @@
+import Sequelize from 'sequelize';
 import { v4 as uuid } from "uuid";
 import { models } from '../config/dbConnect.js';
 import { TException, TNotFoundModel, TNotNullAndEmpty, TSearchModelbyForeignKey } from '../utils/templatesRes.js'
@@ -86,36 +87,45 @@ export async function Update(req, res) {
         const FoundClassTypeSameTypeName = await ClassType.findOne({
             where: {
                 typeName: typeName,
-                userId: req.user.idUser
+                userId: req.user.idUser,
+                [Sequelize.Op.not]: [
+                    { 
+                        idClassType: req.params.idClassType 
+                    }
+                ]
             }
         });
         if (FoundClassTypeSameTypeName) {
             res.status(200).json({
                 success: false,
                 error: {
-                    message: "This typeName is already taken."
+                    message: "This type name is already taken."
                 }
             });
             return;
         }
-        const UpdateClassType = await ClassType.update(
+        const FoundClassType = await ClassType.findOne({
+            where: {
+                idClassType: req.params.idClassType,
+                userId: req.user.idUser
+            }
+        });
+        if (!FoundClassType) {
+            TNotFoundModel(req, res, "Class type");
+            return;
+        }
+        const UpdateClassType = await FoundClassType.update(
             {
                 typeName: typeName
-            },
-            {
-                where: {
-                    idClassType: req.params.idClassType,
-                    userId: req.user.idUser
-                }
             }
         );
-        if (UpdateClassType > 0) {
+        if (UpdateClassType) {
             res.status(200).json({
                 success: true,
-                message: "ClassType updated."
+                message: "Class type updated."
             });
         } else {
-            TNotFoundModel(req, res, "ClassType");
+            throw new Error("Trouble with DB..");
         };
     } catch (err) {
         TException(req, res, err);

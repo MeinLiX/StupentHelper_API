@@ -91,24 +91,13 @@ export async function Update(req, res) {
                 userId: req.user.idUser
             }
         });
-        const UpdateTeacher = await Teacher.update(
-            newData,
-            {
-                where: {
-                    idTeacher: req.params.idTeacher,
-                    userId: req.user.idUser
-                }
-            }
+        const UpdateTeacher = await FoundTeacher.update(
+            newData
         );
-        if (UpdateTeacher > 0) {
+        if (UpdateTeacher) {
             res.status(200).json({
                 success: true,
                 message: "Teacher updated."
-            });
-        } else if (FoundTeacher) {
-            res.status(200).json({
-                success: true,
-                message: "Teacher not changed."
             });
         } else {
             TNotFoundModel(req, res, "Teacher");
