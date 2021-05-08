@@ -6,21 +6,19 @@ const Teacher = models.teacher;
 
 function GetData({ surname, name, middle_name }) {
     let newData;
-    if (surname)
+
         newData = {
             ...newData,
-            surname: surname.trim() == "" ? null : surname.trim()
-        }
-    if (name)
+            surname: surname?.trim() == "" ? null : surname?.trim()
+        };
         newData = {
             ...newData,
-            name: name.trim() == "" ? null : name.trim()
-        }
-    if (middle_name)
+            name: name?.trim() == "" ? null : name?.trim()
+        };
         newData = {
             ...newData,
-            'middle name': middle_name.trim() == "" ? null : middle_name.trim()
-        }
+            'middle name': middle_name?.trim() == "" ? null : middle_name?.trim()
+        };
 
     return newData;
 }
