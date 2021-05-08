@@ -18,7 +18,7 @@ export default (sequelize, DataTypes) => sequelize.define('deadline', {
   },
   subjectId: {
     type: DataTypes.STRING(45),
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'subject',
       key: 'idSubject'
