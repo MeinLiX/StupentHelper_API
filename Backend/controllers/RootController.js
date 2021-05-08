@@ -15,3 +15,11 @@ export async function CheckAuthenticated(req, res) {
         });
     }
 }
+
+export async function Me(req, res) {
+    res.status(200).json({
+        idUser: req.user?.idUser,
+        username: req.user?.username,
+        email: req.user?.email
+    });
+}

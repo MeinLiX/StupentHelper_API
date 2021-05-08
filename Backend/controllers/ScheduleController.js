@@ -159,7 +159,7 @@ export async function Create(req, res) {
         }
 
         //DATE validation:
-        if (!$class?.number || $class?.number < 0 || $class?.number > 9) {
+        if (isNaN($class?.number) || $class?.number < 1 || $class?.number > 9) {
             res.status(200).json({
                 success: false,
                 error: {

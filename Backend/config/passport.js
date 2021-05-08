@@ -22,7 +22,7 @@ export function checkNoAuthenticated(req, res, next) {
     res.status(403).send({
         error:
             {
-                message: 'You already log in!'
+                message: 'You already logged in!'
             }
     });
 
