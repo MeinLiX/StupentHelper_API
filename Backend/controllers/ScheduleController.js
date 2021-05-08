@@ -141,7 +141,6 @@ export async function Create(req, res) {
                 error: {
                     message:
                         `[` +
-                        `${CurrClass == null ? "Class" : ""}` +
                         `${CurrSubject == null ? " Subject" : ""}` +
                         `${CurrWeekday == null ? " Weekday" : ""}` +
                         `${CurrClassType == null ? " ClassType" : ""}` +
