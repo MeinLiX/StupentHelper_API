@@ -102,6 +102,21 @@ export async function FindUK(req, res) {
 
 export async function Create(req, res) {
     let { $class, subjectId, weekdayId, classtypeId, teacherId, parity } = req.body;
+    if (!subjectId || !weekdayId || !classtypeId || !teacherId) {
+        res.status(200).json({
+            success: false,
+            error: {
+                message:
+                    `` +
+                    `${subjectId == null ? " Subject" : ""}` +
+                    `${weekdayId == null ? " Weekday" : ""}` +
+                    `${classtypeId == null ? " ClassType" : ""}` +
+                    `${teacherId == null ? " Teacher" : ""}` +
+                    ` not found, schedule can't be created.`
+            }
+        });
+        return;
+    }
     parity = parity ?? null;
     try {
         //validation id's:
@@ -140,12 +155,12 @@ export async function Create(req, res) {
                 success: false,
                 error: {
                     message:
-                        `[` +
+                        `` +
                         `${CurrSubject == null ? " Subject" : ""}` +
                         `${CurrWeekday == null ? " Weekday" : ""}` +
                         `${CurrClassType == null ? " ClassType" : ""}` +
                         `${CurrTeacher == null ? " Teacher" : ""}` +
-                        `] not found, schedule can't be created.`
+                        ` not found, schedule can't be created.`
                 }
             });
             return;
