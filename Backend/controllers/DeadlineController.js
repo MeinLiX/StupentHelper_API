@@ -4,6 +4,32 @@ import { TException, TNotFoundModel, TNotNullAndEmpty } from '../utils/templates
 
 const Deadline = models.deadline;
 
+function GetData({ date, task, isDone, subjectId }) {
+    let newData;
+    if (date)
+        newData = {
+            ...newData,
+            date
+        }
+    if (task)
+        newData = {
+            ...newData,
+            task: task.trim() == "" ? null : task.trim()
+        }
+    if (isDone!==undefined && isDone != null)
+        newData = {
+            ...newData,
+            isDone
+        }
+    if (subjectId)
+        newData = {
+            ...newData,
+            subjectId
+        }
+
+    return newData;
+}
+
 export async function FindUK(req, res) {
     try {
         const Deadlines = await Deadline.findAll({
@@ -75,8 +101,53 @@ export async function Create(req, res) {
 }
 
 export async function Update(req, res) {
-    try {
+    let newData = GetData(req.body);
 
+    if (newData?.date && TNotNullAndEmpty(req, res, date, "date")) {
+        return;
+    };
+    try {
+        if(newData?.subjectId){
+            const Subjects = await models.subject.findOne({
+                where: {
+                    idSubject: newData?.subjectId,
+                    userId: req.user.idUser
+                }
+            });
+            if (!Subjects) {
+                TNotFoundModel(req, res, "SubjectId");
+                return;
+            }
+        }
+        const FoundDeadline = await Deadline.findOne({
+            where: {
+                idDeadline: req.params.idDeadline,
+                userId: req.user.idUser
+            }
+        });
+       
+        const CreateDeadline = await Deadline.update(
+            newData,
+            {
+                where:{
+                    idDeadline: req.params.idDeadline,
+                    userId: req.user.idUser
+                }     
+            });
+
+        if (CreateDeadline >0) {
+            res.status(200).json({
+                success: true,
+                message: "Deadline is updated."
+            });
+        } else if (FoundDeadline) {
+            res.status(200).json({
+                success: true,
+                message: "Deadline not changed."
+            });
+        } else {
+            TNotFoundModel(req, res, "Deadline");
+        };
     } catch (err) {
         TException(req, res, err);
     };
