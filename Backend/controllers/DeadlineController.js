@@ -92,12 +92,7 @@ export async function Create(req, res) {
                 data: CreateDeadline
             });
         } else {
-            res.status(500).json({
-                success: false,
-                error: {
-                    message: "Trouble with DB.."
-                }
-            });
+            throw new Error("Trouble with db..");
         };
     } catch (err) {
         TException(req, res, err);
@@ -156,19 +151,29 @@ export async function Update(req, res) {
 
 export async function Delete(req, res) {
     try {
-        const DeletedDeadline = await Deadline.destroy({
+        const DeletedDeadline = await Deadline.findOne({
             where: {
                 idDeadline: req.params.idDeadline,
                 userId: req.user.idUser
             }
         });
-        if (DeletedDeadline > 0) {
+        if (!DeletedDeadline) {
+            TNotFoundModel(req, res, "Deadline");
+            return;
+        }
+        const isDeletedDeadline = await DeletedDeadline.destroy();
+        models.Class.destroy({
+            where: {
+                idClass: DeletedDeadline.classId
+            }
+        })
+        if (isDeletedDeadline) {
             res.status(200).json({
                 success: true,
                 message: "Deadline deleted."
             });
         } else {
-            TNotFoundModel(req, res, "Deadline");
+            throw new Error("Can't delete Deadline. Trouble with db..");
         };
     } catch (err) {
         TException(req, res, err);
