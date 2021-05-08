@@ -10,6 +10,7 @@ import teachersRoutes from "./teachers.routes.js";
 import classTypesRoutes from "./classTypes.routes.js";
 import scheduleRoutes from "./schedules.routes.js";
 import deadlineRoutes from "./deadline.routes.js";
+import noteRoutes from "./notes.routes.js";
 
 const router = Router();
 
@@ -28,5 +29,6 @@ router.use('/teachers', teachersRoutes);
 router.use('/classtypes', classTypesRoutes);
 router.use('/schedules', scheduleRoutes);
 router.use('/deadlines', deadlineRoutes);
+router.use('/notes', noteRoutes);
 
 export default router;
