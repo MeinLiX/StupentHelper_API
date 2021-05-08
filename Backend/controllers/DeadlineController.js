@@ -73,25 +73,6 @@ export async function Create(req, res) {
         TException(req, res, err);
     };
 }
-async function ForUpdateIsDone(req, res, model, isDone = false) {
-
-}
-
-export async function Complete(req, res) {
-    try {
-
-    } catch (err) {
-        TException(req, res, err);
-    };
-}
-
-export async function Uncomplete(req, res) {
-    try {
-
-    } catch (err) {
-        TException(req, res, err);
-    };
-}
 
 export async function Update(req, res) {
     try {
