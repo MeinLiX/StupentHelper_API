@@ -16,7 +16,7 @@ config.app = {
 };
 
 config.cors={
-    origin: "http://meinlix.tk:3000",
+    origin: "http://studenthelper.tk",
     credentials: true
 }
 
