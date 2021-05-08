@@ -65,13 +65,7 @@ export async function FindUK(req, res) {
                 ]);
 
                 if (!CurrClass || !CurrSubject || !CurrWeekday || !CurrClassType || !CurrTeacher) {
-                    res.status(500).json({
-                        success: false,
-                        error: {
-                            message: "Some element's not found, schedule incorrect. Trouble with DB.."
-                        }
-                    });
-                    return;
+                    throw new Error("Some element's not found, schedule incorrect. Trouble with DB..");
                 }
                 data[parseInt(CurrWeekday.idWeekday) - 1].push({
                     idSchedule: el.idSchedule,
@@ -107,7 +101,6 @@ export async function Create(req, res) {
             success: false,
             error: {
                 message:
-                    `` +
                     `${subjectId == null ? " Subject" : ""}` +
                     `${weekdayId == null ? " Weekday" : ""}` +
                     `${classtypeId == null ? " ClassType" : ""}` +
@@ -155,7 +148,6 @@ export async function Create(req, res) {
                 success: false,
                 error: {
                     message:
-                        `` +
                         `${CurrSubject == null ? " Subject" : ""}` +
                         `${CurrWeekday == null ? " Weekday" : ""}` +
                         `${CurrClassType == null ? " ClassType" : ""}` +
@@ -167,6 +159,15 @@ export async function Create(req, res) {
         }
 
         //DATE validation:
+        if (!$class?.number || $class?.number < 0 || $class?.number > 9) {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message: "Class number invalid."
+                }
+            });
+            return;
+        }
         const DateCkassFrom = ParseDateHHMM($class.from);
         const DateClassTo = ParseDateHHMM($class.to);
         if (!DateCkassFrom || !DateClassTo) {
@@ -187,13 +188,7 @@ export async function Create(req, res) {
                 to: DateClassTo
             });
         if (!CreateClass) {
-            res.status(500).json({
-                success: false,
-                error: {
-                    message: "Class not created. Trouble with DB.."
-                }
-            });
-            return;
+            throw new Error("Class not created. Trouble with DB..");
         }
         const CreateSchedule = await Schedule.create(
             {
@@ -214,12 +209,7 @@ export async function Create(req, res) {
                 data: CreateSchedule
             });
         } else {
-            res.status(500).json({
-                success: false,
-                error: {
-                    message: "Trouble with DB.."
-                }
-            });
+            throw new Error("Trouble with db...");
         };
 
     } catch (err) {
