@@ -38,10 +38,6 @@ export async function GetNoteData(req, res) {
 
 export async function Update(req, res) {
     try {
-        if (TNotNullAndEmpty(req, res, req.body?.content, "content")) {
-            return;
-        };
-
         const FoundSubject = await Subject.findOne({
             where: {
                 idSubject: req.params.idSubject,
