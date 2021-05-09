@@ -216,6 +216,143 @@ export async function Create(req, res) {
         TException(req, res, err);
     };
 }
+export async function Update(req, res) {
+    let { $class, subjectId, weekdayId, classtypeId, teacherId, parity } = req.body;
+    if (!$class || !$class?.number || !$class?.from || !$class?.to || !subjectId || !weekdayId || !classtypeId || !teacherId) {
+        res.status(200).json({
+            success: false,
+            error: {
+                message:
+                    `${$class == null ? "Class" : ""}` +
+                    `${$class?.number == null ? "Number" : ""}` +
+                    `${$class?.from == null ? "Time from" : ""}` +
+                    `${$class?.to == null ? "Time to" : ""}` +
+                    `${subjectId == null ? " Subject" : ""}` +
+                    `${weekdayId == null ? " Weekday" : ""}` +
+                    `${classtypeId == null ? " ClassType" : ""}` +
+                    `${teacherId == null ? " Teacher" : ""}` +
+                    ` not found, schedule can't be created.`
+            }
+        });
+        return;
+    }
+    parity = parity ?? null;
+    try {
+        //validation id's:
+        const [CurrSchedule, CurrSubject, CurrWeekday, CurrClassType, CurrTeacher] = await Promise.all([
+            Schedule.findOne({
+                where:
+                {
+                    idSchedule: req.params.idSchedule,
+                    userId: req.user.idUser
+                }
+            }),
+            models.subject.findOne({
+                where:
+                {
+                    idSubject: subjectId,
+                    userId: req.user.idUser
+                }
+            }),
+            models.weekday.findOne({
+                where:
+                {
+                    idWeekday: weekdayId
+                }
+            }),
+            models.classtype.findOne({
+                where:
+                {
+                    idClassType: classtypeId,
+                    userId: req.user.idUser
+                }
+            }),
+            models.teacher.findOne({
+                where:
+                {
+                    idTeacher: teacherId,
+                    userId: req.user.idUser
+                }
+            }),
+        ]);
+
+        if (!CurrSchedule || !CurrSubject || !CurrWeekday || !CurrClassType || !CurrTeacher) {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message:
+                        `${CurrSchedule == null ? " Schedule" : ""}` +
+                        `${CurrSubject == null ? " Subject" : ""}` +
+                        `${CurrWeekday == null ? " Weekday" : ""}` +
+                        `${CurrClassType == null ? " ClassType" : ""}` +
+                        `${CurrTeacher == null ? " Teacher" : ""}` +
+                        ` not found, schedule can't be created.`
+                }
+            });
+            return;
+        }
+
+        //DATE validation:
+        if (isNaN($class?.number) || $class?.number < 1 || $class?.number > 9) {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message: "Class number invalid."
+                }
+            });
+            return;
+        }
+        const DateCkassFrom = ParseDateHHMM($class?.from);
+        const DateClassTo = ParseDateHHMM($class?.to);
+        if (!DateCkassFrom || !DateClassTo) {
+            res.status(200).json({
+                success: false,
+                error: {
+                    message: "Class 'from'|'to' invalid."
+                }
+            });
+            return;
+        }
+        //Try creation:
+        console.log("before Class")
+        const UpdateClass = await Class.update(
+            {
+                number: $class?.number,
+                from: DateCkassFrom,
+                to: DateClassTo
+            }, {
+                where: {
+                    idClass: CurrSchedule.classId
+                }
+        });
+        if (!UpdateClass) {
+            throw new Error("Class not updated. Trouble with DB..");
+        }
+        console.log("before Schedule")
+        const UpdateSchedule = await CurrSchedule.update(
+            {
+                parity: parity,
+                classId: UpdateClass.idClass,
+                subjectId: subjectId,
+                weekdayId: weekdayId,
+                classtypeId: classtypeId,
+                teacherId: teacherId
+            });
+
+        if (UpdateSchedule) {
+            res.status(200).json({
+                success: true,
+                message: "Schedule is updated.",
+                data: UpdateSchedule
+            });
+        } else {
+            throw new Error("Trouble with db...");
+        };
+
+    } catch (err) {
+        TException(req, res, err);
+    };
+}
 
 export async function Delete(req, res) {
     try {
