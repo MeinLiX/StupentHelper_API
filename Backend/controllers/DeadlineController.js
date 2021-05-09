@@ -11,10 +11,10 @@ function GetData({ date, task, isDone, subjectId }) {
             ...newData,
             date: new Date(date)
         }
-    if (task)
+    if (typeof task == "string")
         newData = {
             ...newData,
-            task: task.trim() == "" ? null : task.trim()
+            task: task?.trim()
         }
     if (isDone !== undefined && isDone != null)
         newData = {
@@ -61,9 +61,11 @@ export async function FindUK(req, res) {
 
 export async function Create(req, res) {
     let newData = GetData(req.body);
-    if (TNotNullAndEmpty(req, res, newData?.date, "date")) {
+    if (TNotNullAndEmpty(req, res, newData?.date, "date") ||
+        TNotNullAndEmpty(req, res, newData?.task, "task")) {
         return;
     };
+
     try {
         if (newData?.subjectId) {
             const Subjects = await models.subject.findOne({
@@ -101,8 +103,13 @@ export async function Create(req, res) {
 
 export async function Update(req, res) {
     let newData = GetData(req.body);
+    if (typeof newData?.task == "string")
+        if (TNotNullAndEmpty(req, res, newData?.task, "task")) {
+            return;
+        }
 
     try {
+        console.log(newData);
         if (newData?.subjectId) {
             const Subjects = await models.subject.findOne({
                 where: {
