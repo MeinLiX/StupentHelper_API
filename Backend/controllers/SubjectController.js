@@ -145,12 +145,21 @@ export async function Delete(req, res) {
         )) {
             return;
         }
+        
         const CreateNote = await models.notes.destroy({
             where: {
                 subjectId: req.params.idSubject
             }
         });
 
+        if (await TSearchModelbyForeignKey(models.notes, req, res,
+            {
+                subjectId: req.params.idSubject,
+            }
+        )) {
+            return;
+        }
+        
         const DeletedSubject = Subject.destroy({
             where: {
                 idSubject: req.params.idSubject,
